@@ -1,0 +1,196 @@
+/* Тёмная «студия», как в видео: карточка аватара с LIVE, волна звука, субтитры.
+   Казахский акцент: золото, шаңырақ, орнамент. */
+:root{
+  --night:#070C1C; --navy:#101735; --panel:#151E44; --line:rgba(140,160,255,.22);
+  --gold:#D8B36A; --sky:#5BE3F2; --ink:#EEF0FA; --muted:#97A0C3; --live:#4BE08F; --rec:#FF5C7A;
+  --display:"Unbounded","Segoe UI",system-ui,sans-serif;
+  --body:"Golos Text","Segoe UI",system-ui,-apple-system,sans-serif;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0}
+body{background:radial-gradient(ellipse 70% 60% at 50% 20%,#1A2252 0%,var(--night) 70%) var(--night);color:var(--ink);font-family:var(--body);font-size:16px;overflow-x:hidden}
+body::before{content:"";position:fixed;inset:0;pointer-events:none;opacity:.5;
+  background-image:radial-gradient(1px 1px at 12% 18%,#fff8,transparent),radial-gradient(1px 1px at 78% 12%,#fff6,transparent),radial-gradient(1px 1px at 35% 82%,#fff5,transparent),radial-gradient(1px 1px at 88% 70%,#fff7,transparent),radial-gradient(1px 1px at 55% 40%,#fff4,transparent),radial-gradient(1px 1px at 22% 60%,#fff6,transparent)}
+button,input,select{font-family:var(--body)}
+button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid var(--sky);outline-offset:2px}
+
+.stage{min-height:100%;display:grid;place-items:center;padding:20px}
+.card{width:min(1040px,100%);background:linear-gradient(180deg,rgba(26,34,82,.92),rgba(16,23,53,.95));border:1px solid var(--line);border-radius:22px;padding:14px;display:flex;flex-direction:column;gap:12px;box-shadow:0 30px 80px rgba(0,0,0,.45);transition:box-shadow .4s,border-color .4s}
+body[data-state="listening"] .card{border-color:rgba(255,92,122,.55);box-shadow:0 0 0 1px rgba(255,92,122,.25),0 30px 80px rgba(0,0,0,.45)}
+body[data-state="speaking"] .card{border-color:rgba(127,162,255,.6);box-shadow:0 0 40px rgba(127,162,255,.18),0 30px 80px rgba(0,0,0,.45)}
+
+.card-head{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:2px 4px}
+.brand{display:flex;align-items:center;gap:10px;min-width:0}
+.brand svg{width:30px;height:30px;color:var(--gold);flex:none}
+.brand b{font:700 15px var(--display);letter-spacing:.14em;color:var(--gold);display:block}
+.brand span{font-size:12.5px;color:var(--muted)}
+.live{display:inline-flex;align-items:center;gap:7px;font:600 12px var(--body);letter-spacing:.08em;padding:5px 11px;border-radius:999px;border:1px solid var(--line);color:var(--muted)}
+.live i{width:8px;height:8px;border-radius:50%;background:#6B7290}
+.live.on{color:var(--ink)} .live.on i{background:var(--live);box-shadow:0 0 8px var(--live);animation:blink 1.6s infinite}
+@keyframes blink{50%{opacity:.35}}
+
+.screen{position:relative;border-radius:16px;overflow:hidden;aspect-ratio:3/2;background:#000}
+.screen canvas{width:100%;height:100%;display:block}
+.captions{position:absolute;left:0;right:0;bottom:0;padding:40px 6% 18px;background:linear-gradient(180deg,transparent,rgba(5,8,20,.82));display:flex;flex-direction:column;gap:6px;pointer-events:none}
+.captions p{margin:0;text-wrap:balance;text-shadow:0 2px 10px #000}
+.captions .you{font-size:clamp(13px,1.3vw,16px);color:#C9D3FF}
+.captions .you:not(:empty)::before{content:"Сұрақ: ";opacity:.7}
+.captions .her{font-size:clamp(16px,1.9vw,24px);line-height:1.4;max-height:4.3em;overflow:hidden;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical}
+body.no-caps .captions{display:none}
+
+.start{position:absolute;inset:0;border:0;background:rgba(5,8,20,.45);color:var(--ink);display:grid;place-content:center;gap:14px;cursor:pointer;font:500 14px var(--display);letter-spacing:.2em;justify-items:center}
+.start .ring{width:96px;height:96px;border-radius:50%;border:2px solid var(--gold);display:grid;place-items:center;color:var(--gold);box-shadow:0 0 50px rgba(216,179,106,.4);animation:pulse 2.2s ease-in-out infinite}
+.start svg{width:36px;height:36px;margin-left:6px}
+.start.gone{display:none}
+@keyframes pulse{50%{box-shadow:0 0 0 14px rgba(216,179,106,.06),0 0 70px rgba(216,179,106,.55)}}
+
+.wave{height:34px;display:flex;align-items:center;justify-content:center;gap:4px}
+.wave i{width:4px;height:4px;border-radius:2px;background:var(--sky);opacity:.55;transition:height .06s linear}
+body[data-state="listening"] .wave i{background:var(--rec);opacity:.9}
+body[data-state="speaking"] .wave i{opacity:.95}
+
+.controls{display:flex;align-items:center;gap:14px;padding:0 4px}
+.mic{flex:none;width:64px;height:64px;border-radius:50%;border:0;cursor:pointer;color:#fff;display:grid;place-items:center;background:linear-gradient(180deg,#8EA8FF,#5B6FE0);box-shadow:0 8px 24px rgba(91,111,224,.45);transition:transform .15s}
+.mic svg{width:26px;height:26px}
+.mic:hover{transform:scale(1.05)}
+body[data-state="listening"] .mic{background:linear-gradient(180deg,#FF7A93,#E2405F);box-shadow:0 0 0 8px rgba(255,92,122,.18),0 8px 24px rgba(226,64,95,.5);animation:micpulse 1.2s infinite}
+@keyframes micpulse{50%{box-shadow:0 0 0 16px rgba(255,92,122,.06),0 8px 24px rgba(226,64,95,.5)}}
+.status{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
+.status b{font-weight:600;font-size:16px}
+.status span{font-size:12.5px;color:var(--muted)}
+.toggle{display:flex;align-items:center;gap:8px;font-size:13.5px;color:var(--muted);cursor:pointer;white-space:nowrap}
+.toggle input{accent-color:var(--sky);width:18px;height:18px}
+
+.ask{display:flex;gap:8px}
+.ask input{flex:1;min-width:0;background:rgba(0,0,0,.28);border:1px solid var(--line);border-radius:999px;color:var(--ink);font-size:15px;padding:11px 18px;outline:none}
+.ask input:focus{border-color:var(--sky)}
+.ask button{border:0;border-radius:999px;padding:0 20px;font-weight:600;font-size:15px;background:var(--gold);color:#1A1406;cursor:pointer}
+
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{font-size:13.5px;color:var(--ink);background:rgba(127,162,255,.08);border:1px solid var(--line);border-radius:999px;padding:7px 13px;cursor:pointer}
+.chip:hover{border-color:var(--sky)}
+
+.tools{display:flex;flex-wrap:wrap;gap:8px;align-items:center;padding-top:4px;border-top:1px solid var(--line)}
+.tbtn{font-size:12.5px;color:var(--ink);background:transparent;border:1px solid var(--line);border-radius:999px;padding:6px 12px;cursor:pointer}
+select.tbtn option{background:var(--navy)}
+.tbtn:hover{border-color:var(--sky)}
+.badge{margin-left:auto;font-size:12px;color:var(--muted)}
+.badge.warn{color:#FFC46B}
+
+/* режим большого экрана: только лицо, субтитры и кнопка микрофона */
+body.big .stage{padding:0}
+body.big .card{width:100vw;height:100vh;border-radius:0;padding:0;border:0;gap:0;position:relative}
+body.big .card-head,body.big .ask,body.big .chips,body.big .tools,body.big .status,body.big .toggle{display:none}
+body.big .screen{flex:1;aspect-ratio:auto;border-radius:0}
+body.big .screen canvas{object-fit:cover}
+body.big .wave{position:absolute;left:50%;bottom:110px;transform:translateX(-50%);z-index:3}
+body.big .controls{position:absolute;left:50%;bottom:28px;transform:translateX(-50%);z-index:3;padding:0}
+body.big .captions{padding-bottom:160px}
+body.big .captions .her{font-size:clamp(22px,2.4vw,34px)}
+body.big .exit{display:block}
+
+.toast{position:fixed;left:50%;top:20px;transform:translate(-50%,-20px);background:var(--panel);border:1px solid var(--gold);padding:11px 16px;border-radius:12px;font-size:14.5px;opacity:0;pointer-events:none;transition:.3s;z-index:50;max-width:min(92vw,560px)}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+
+@media (max-width:700px){.controls{flex-wrap:wrap}.toggle{width:100%}}
+@media (prefers-reduced-motion:reduce){.live.on i,.start .ring,body[data-state="listening"] .mic{animation:none}}
+
+/* голографическая табличка в левом нижнем углу сцены */
+.screen{container-type:inline-size}
+.plaque{position:absolute;left:3.5%;bottom:6.5%;width:39%;padding:2.2cqw 2.6cqw 2cqw;display:flex;flex-direction:column;gap:.7cqw;
+  background:linear-gradient(135deg,rgba(53,198,216,.16),rgba(10,40,60,.38) 60%,rgba(216,179,106,.1));
+  border:1px solid rgba(120,225,240,.55);border-radius:1.2cqw;box-shadow:0 0 2.4cqw rgba(53,198,216,.35),inset 0 0 2cqw rgba(53,198,216,.18);
+  backdrop-filter:blur(3px);transform:perspective(60cqw) rotateY(9deg);transform-origin:0 50%;overflow:hidden;
+  opacity:0;visibility:hidden;transition:opacity .8s ease,visibility 0s linear .8s;pointer-events:none}
+body.live:not(.caps) .plaque{opacity:1;visibility:visible;transition:opacity 1s ease .2s,visibility 0s}
+.plaque::after{content:"";position:absolute;inset:0;background:repeating-linear-gradient(0deg,rgba(150,235,245,.06) 0 1px,transparent 1px 4px)}
+.plaque::before{content:"";position:absolute;left:-40%;top:0;bottom:0;width:30%;background:linear-gradient(90deg,transparent,rgba(180,240,250,.18),transparent);animation:sweep 6s ease-in-out infinite}
+.plaque small{font:500 .95cqw/1.3 var(--body);letter-spacing:.14em;color:#BFEFF6}
+.plaque b{font:700 2.45cqw/1.15 var(--display);letter-spacing:.04em;background:linear-gradient(180deg,#FFFFFF 0%,#BFF3FA 45%,#E8C77E 100%);-webkit-background-clip:text;background-clip:text;color:transparent;filter:drop-shadow(0 0 .6cqw rgba(53,198,216,.7))}
+.plaque span{display:flex;align-items:center;gap:.7cqw;font:500 1.15cqw var(--body);letter-spacing:.08em;color:#E8C77E}
+.plaque span i{width:.7cqw;height:.7cqw;border-radius:50%;background:#5BE3F2;box-shadow:0 0 .8cqw #5BE3F2;animation:blink 1.6s infinite}
+.corner{position:absolute;width:2.6cqw;height:2.6cqw}
+.corner.tl{left:.6cqw;top:.6cqw}.corner.br{right:.6cqw;bottom:.6cqw;transform:rotate(180deg)}
+@keyframes sweep{0%,60%{left:-40%}100%{left:120%}}
+body:not(.caps) .captions{opacity:0}
+.captions{transition:opacity .5s}
+
+/* вместо кнопки «Бастау» — кинематографичное вступление (cine.js) */
+.start{display:none!important}
+
+/* ---- голографиялық микрофон батырмасы (табличканың орнында) ---- */
+.holo-mic{position:absolute;left:9%;bottom:8%;z-index:5;display:flex;align-items:center;gap:2.2cqw;padding:0;border:0;background:none;cursor:pointer;color:#E9FBFF;font-family:"Unbounded","Golos Text",system-ui,sans-serif;
+  opacity:0;visibility:hidden;transform:translateY(1cqw);transition:opacity .9s ease .3s,transform .9s ease .3s,visibility 0s linear 1.2s}
+body.live .holo-mic{opacity:1;visibility:visible;transform:none;transition:opacity .9s ease .3s,transform .9s ease .3s,visibility 0s}
+.holo-mic .hm-orb{position:relative;width:9.5cqw;height:9.5cqw;flex:none;display:grid;place-items:center}
+.holo-mic .hm-ring{position:absolute;inset:0;border-radius:50%;border:.14cqw solid rgba(110,232,255,.55);box-shadow:0 0 1.4cqw rgba(53,198,216,.35),inset 0 0 1.2cqw rgba(53,198,216,.25)}
+.holo-mic .hm-ring.r2{inset:-1.1cqw;border-color:rgba(232,199,126,.45);border-style:dashed;animation:hmSpin 14s linear infinite}
+.holo-mic .hm-ring.r3{inset:-2.4cqw;border-color:rgba(110,232,255,.18);animation:hmPulse 2.6s ease-out infinite}
+.holo-mic .hm-ring.r4{inset:-2.4cqw;border-color:rgba(110,232,255,.18);animation:hmPulse 2.6s ease-out 1.3s infinite}
+.holo-mic .hm-core{position:relative;width:72%;height:72%;border-radius:50%;display:grid;place-items:center;
+  background:radial-gradient(circle at 35% 30%,#9ff4ff 0%,#2bb7e6 38%,#0b5f8c 75%,#06324d 100%);
+  box-shadow:0 0 2.6cqw rgba(53,198,216,.75),inset 0 -.6cqw 1.2cqw rgba(0,20,40,.55),inset 0 .4cqw .8cqw rgba(255,255,255,.35);transition:transform .2s,box-shadow .3s,background .4s}
+.holo-mic .hm-core svg{width:46%;height:46%;filter:drop-shadow(0 0 .5cqw rgba(255,255,255,.7))}
+.holo-mic:hover .hm-core{transform:scale(1.06);box-shadow:0 0 3.6cqw rgba(53,198,216,.95),inset 0 -.6cqw 1.2cqw rgba(0,20,40,.55),inset 0 .4cqw .8cqw rgba(255,255,255,.35)}
+.holo-mic:focus-visible{outline:none}.holo-mic:focus-visible .hm-ring.r1{border-color:#fff}
+.holo-mic .hm-bars{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;gap:.45cqw;opacity:0;transition:opacity .3s}
+.holo-mic .hm-bars i{width:.55cqw;height:1cqw;border-radius:.3cqw;background:#fff;box-shadow:0 0 .6cqw #fff}
+.holo-mic .hm-text{display:flex;flex-direction:column;gap:.45cqw;text-align:left;text-shadow:0 .2cqw 1.2cqw #000}
+.holo-mic .hm-text b{font-size:1.75cqw;font-weight:700;letter-spacing:.14em;background:linear-gradient(180deg,#FFFFFF 0%,#BFF3FA 50%,#E8C77E 100%);-webkit-background-clip:text;background-clip:text;color:transparent}
+.holo-mic .hm-text small{font:500 1.05cqw "Golos Text",system-ui,sans-serif;letter-spacing:.08em;color:#9FE6F5}
+.holo-mic .st{display:none}
+body[data-state="idle"] .holo-mic .st-idle,body:not([data-state]) .holo-mic .st-idle{display:inline}
+body[data-state="listening"] .holo-mic .st-listening,body[data-state="thinking"] .holo-mic .st-thinking,body[data-state="speaking"] .holo-mic .st-speaking{display:inline}
+/* тыңдап тұр: қызыл толқындар, ақ эквалайзер */
+body[data-state="listening"] .holo-mic .hm-core{background:radial-gradient(circle at 35% 30%,#ffc2cd 0%,#ff5c7a 40%,#a3203d 80%,#5a0f22 100%);box-shadow:0 0 3.2cqw rgba(255,92,122,.85),inset 0 -.6cqw 1.2cqw rgba(40,0,10,.5)}
+body[data-state="listening"] .holo-mic .hm-ring{border-color:rgba(255,120,145,.6)}
+body[data-state="listening"] .holo-mic .hm-ring.r3,body[data-state="listening"] .holo-mic .hm-ring.r4{border-color:rgba(255,92,122,.45);animation-duration:1.3s}
+body[data-state="listening"] .holo-mic .hm-core svg{opacity:0}
+body[data-state="listening"] .holo-mic .hm-bars{opacity:1}
+body[data-state="listening"] .holo-mic .hm-bars i{animation:hmEq .55s ease-in-out infinite alternate}
+.holo-mic .hm-bars i:nth-child(2){animation-delay:.12s}.holo-mic .hm-bars i:nth-child(3){animation-delay:.24s}.holo-mic .hm-bars i:nth-child(4){animation-delay:.36s}.holo-mic .hm-bars i:nth-child(5){animation-delay:.48s}
+/* ойланып жатыр: алтын сақина тез айналады */
+body[data-state="thinking"] .holo-mic .hm-ring.r2{animation-duration:1.4s;border-color:rgba(232,199,126,.9)}
+/* сөйлеп тұр: көгілдір толқындар */
+body[data-state="speaking"] .holo-mic .hm-ring.r3,body[data-state="speaking"] .holo-mic .hm-ring.r4{border-color:rgba(110,232,255,.45);animation-duration:1.6s}
+@keyframes hmSpin{to{transform:rotate(360deg)}}
+@keyframes hmPulse{0%{transform:scale(.75);opacity:1}100%{transform:scale(1.35);opacity:0}}
+@keyframes hmEq{from{height:1cqw}to{height:4.2cqw}}
+@media (prefers-reduced-motion:reduce){.holo-mic *{animation:none!important}}
+
+body.caps .holo-mic .hm-text{opacity:0;transition:opacity .4s}
+.captions{padding-left:30%}
+
+/* на экране только микрофон: остальное скрыто. Shift+S — показать/скрыть панель оператора */
+body:not(.admin) .controls,body:not(.admin) .ask,body:not(.admin) .chips,body:not(.admin) .tools{display:none}
+body:not(.admin) .card{padding-bottom:14px}
+/* карточка не сжимается, даже когда панель оператора скрыта */
+.card{width:min(1040px,calc(100vw - 40px))}
+body.big .card{width:100vw}
+.stage{grid-template-columns:100%;justify-items:center}
+
+/* сахна әрқашан экранның ортасында және экранға толық сыяды (айналдырусыз) */
+.stage{display:flex;align-items:center;justify-content:center;width:100%;min-height:100vh;min-height:100dvh;box-sizing:border-box;padding:20px}
+.card{margin:0 auto;flex:none;box-sizing:border-box}
+body:not(.admin):not(.big) .card{width:min(calc(100vw - 40px),calc((100vh - 176px) * 1.5 + 30px))}
+@supports (height:100dvh){body:not(.admin):not(.big) .card{width:min(calc(100vw - 40px),calc((100dvh - 176px) * 1.5 + 30px))}}
+body:not(.admin){overflow:hidden}
+body.big .stage{padding:0}
+
+/* ===== v3: карточка экранға бекітіліп, дәл ортада тұрады (беттің айналуына тәуелсіз) ===== */
+html{overflow:hidden}
+body:not(.admin):not(.big) .card{position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);margin:0}
+/* субтитр жоқ: тек дауыспен сөйлейді */
+.captions{display:none!important}
+body.caps .holo-mic .hm-text{opacity:1}
+
+/* ===== v4: ТОЛЫҚ ЭКРАН — жоғарғы жазусыз, рамкасыз, сахна бүкіл экранды алады =====
+   Shift+S (оператор панелі) басылғанда ғана ескі карточка көрінісі қайтады. */
+body:not(.admin) .stage{padding:0}
+body:not(.admin) .card{position:fixed!important;inset:0!important;left:0!important;top:0!important;transform:none!important;
+  width:100vw!important;height:100vh;height:100dvh;margin:0;padding:0!important;border:0!important;border-radius:0!important;gap:0;box-shadow:none!important;background:#000}
+body:not(.admin) .card-head,body:not(.admin) .wave{display:none!important}
+body:not(.admin) .screen{flex:1 1 auto;width:100%;height:100%;aspect-ratio:auto;border-radius:0}
+body:not(.admin) .screen canvas{object-fit:cover;object-position:50% 45%}
+html:has(body.admin){overflow:auto}

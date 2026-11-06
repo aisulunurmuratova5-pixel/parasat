@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PARASAT · AI аватар</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@500;700&family=Golos+Text:wght@400;500;600&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/static/style.css">
+<link rel="stylesheet" href="/static/cine.css">
+</head>
+<body data-state="idle">
+
+<main class="stage">
+  <section class="card" id="card">
+    <header class="card-head">
+      <div class="brand">
+        <svg viewBox="0 0 40 40" aria-hidden="true"><g fill="none" stroke="currentColor" stroke-width="2.4"><circle cx="20" cy="20" r="17"/><circle cx="20" cy="20" r="6"/><path d="M6 14C14 18 26 18 34 14M6 26C14 22 26 22 34 26M14 6C18 14 18 26 14 34M26 6C22 14 22 26 26 34"/></g></svg>
+        <div><b>PARASAT</b><span>Парасат апталығына қош келдіңіздер!</span></div>
+      </div>
+      <span class="live" id="live"><i></i><span id="liveText">Қосылуда</span></span>
+    </header>
+
+    <div class="screen">
+      <canvas id="face" aria-label="PARASAT аватары"></canvas>
+    <button class="holo-mic" id="holoMic" type="button" aria-label="Микрофонмен сұрақ қою">
+      <span class="hm-orb">
+        <span class="hm-ring r4"></span><span class="hm-ring r3"></span><span class="hm-ring r2"></span><span class="hm-ring r1"></span>
+        <span class="hm-core">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round"><rect x="9" y="3" width="6" height="11" rx="3" fill="rgba(255,255,255,.25)"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3M9 21h6"/></svg>
+          <span class="hm-bars"><i></i><i></i><i></i><i></i><i></i></span>
+        </span>
+      </span>
+      <span class="hm-text">
+        <b><span class="st st-idle">СҰРАҚ ҚОЮ</span><span class="st st-listening">ТЫҢДАП ТҰРМЫН</span><span class="st st-thinking">ОЙЛАНЫП ЖАТЫРМЫН</span><span class="st st-speaking">ЖАУАП БЕРІП ТҰРМЫН</span></b>
+        <small><span class="st st-idle">Микрофонды басып, сұрағыңызды айтыңыз</span><span class="st st-listening">Сөйлеңіз, мен тыңдап тұрмын</span><span class="st st-thinking">Бір сәт күте тұрыңыз</span><span class="st st-speaking">Тоқтату үшін басыңыз</span></small>
+      </span>
+    </button>
+      <div class="captions" id="captions" aria-live="polite">
+        <p class="you" id="youText"></p>
+        <p class="her" id="herText"></p>
+      </div>
+      <button class="start" id="startBtn" type="button">
+        <span class="ring"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M7 4.5v15l12-7.5z"/></svg></span>
+        <span>Бастау</span>
+      </button>
+    </div>
+
+    <div class="wave" id="wave" aria-hidden="true"></div>
+
+    <div class="controls">
+      <button class="mic" id="micBtn" type="button" aria-label="Микрофонмен сұрау (Space)">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></svg>
+      </button>
+      <div class="status"><b id="statusText">Микрофонды басып, сұрақ қойыңыз</b><span id="hint">Space — сөйлеу · Esc — тоқтату</span></div>
+      <label class="toggle"><input type="checkbox" id="handsFree"><span>Үздіксіз тыңдау</span></label>
+    </div>
+
+    <form class="ask" id="askForm" autocomplete="off">
+      <input id="q" type="text" maxlength="500" placeholder="Немесе сұрақты жазыңыз…" aria-label="Сұрақ">
+      <button type="submit">Сұрау</button>
+    </form>
+
+    <div class="chips" id="chips"></div>
+
+    <footer class="tools">
+      <button type="button" class="tbtn" id="cineBtn">Басынан бастау</button>
+      <button type="button" class="tbtn" data-cmd="entrance">Кіріспе анимациясы</button>
+      <button type="button" class="tbtn" data-cmd="greet">Өзін таныстыру</button>
+      <button type="button" class="tbtn" data-cmd="stop">Тоқтату</button>
+      <button type="button" class="tbtn" data-cmd="reset">Жаңа келуші</button>
+      <button type="button" class="tbtn" id="stageBtn">Үлкен экран</button>
+      <select class="tbtn" id="sttSel" aria-label="Сөзді тану әдісі">
+        <option value="browser">Тану: браузер (Chrome)</option>
+        <option value="whisper">Тану: Whisper (сервер)</option>
+      </select>
+      <span class="badge" id="modeBadge"></span>
+    </footer>
+  </section>
+</main>
+
+<div class="toast" id="toast" role="status"></div>
+<script src="/static/cine.js" data-lab="/static/lab.jpg"></script>
+<script type="module" src="/static/app.js"></script>
+</body>
+</html>

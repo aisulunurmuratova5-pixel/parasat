@@ -1,0 +1,6 @@
+.env
+logs/
+__pycache__/
+venv/
+.venv/
+test_voice.mp3
